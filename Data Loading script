@@ -1,0 +1,21 @@
+
+
+#!/bin/bash
+
+for dir in $(ls . | grep .zip); 
+do 
+echo  "$(date) : processing $dir  start" 
+date_str=date_str=$(echo $dir | awk -F '/' '{print $(NF)}' | awk -F '_' '{print $2}')
+market_par=$(echo $dir | awk -F '/' '{print $(NF)}' | awk -F '_' '{print $1}')
+no_of_file=$(ls $dir/*/*.json | wc -l)
+echo "No of files in the directory $dir = ${no_of_file}"
+	for file in $(ls $dir/*/*.json); 
+	do
+		table=$(echo $file | awk -F '/' '{print $NF}' |  awk -F '.json' '{print $1}')
+		echo  "$(date) : loading $file  start" 
+		echo " hive -e LOAD DATA LOCAL  INPATH '$(pwd)/$file'  INTO TABLE  $table PARTITION ( market ='$market_par', dt='$date_str' )"
+		echo  "$(date) : loading $file  end" 
+	done
+echo  "$(date) : processing $dir  end" 
+done
+
