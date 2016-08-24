@@ -1,0 +1,31 @@
+
+
+##HDFS_DIR="/data/raw/"
+
+for dir in $(ls . | grep _FULL | grep -v .loadeded);
+do
+echo  "$(date) : processing $dir  start"
+date_str=$(echo $dir | awk -F '/' '{print $(NF)}' | awk -F '_' '{print $2}')
+market_par=$(echo $dir | awk -F '/' '{print $(NF)}' | awk -F '_' '{print $1}')
+no_of_file=$(ls $dir/*.json | wc -l)
+echo "No of files in the directory $dir = ${no_of_file}"
+if [ $no_of_file -ne 19 ] ;
+then
+echo "No of files in the directory $dir = ${no_of_file}  processing directory " ;
+
+        for file in $(ls $dir/*.json);
+        do
+                table=$(echo $file | awk -F '/' '{print $NF}' |  awk -F '.json' '{print $1}' | tr '[:upper:]' '[:lower:]')
+                echo  "$(date) : loading $file  start"
+                dfile=$( echo $file |  sed -e 's/_FULL\//_/g')
+                 echo "hadoop fs -put ${file} ${HDFS_DIR}/${table}/"_"${dfile}"
+              ##  hadoop fs -put ${file} ${HDFS_DIR}/${table}/"file_"${dfile}
+                echo  "$(date) : loading $file  end"
+        done
+echo  "$(date) : processing $dir  end"
+echo mv ${dir} ${dir}.loadeded
+mv ${dir} ${dir}.loadeded
+
+fi
+
+done
