@@ -26,6 +26,8 @@ echo  "$(date) : processing $dir  end"
 echo mv ${dir} ${dir}.loadeded
 mv ${dir} ${dir}.loadeded
 
+print "this is good"
+
 fi
 
 done
